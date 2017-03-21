@@ -4,7 +4,7 @@ NAME="python-pip"
 VERSION=9.0.1
 RELEASE=1
 CATEGORY="Python"
-SUMMARY="Python 3 package installation tool"
+SUMMARY="Python package installation tool"
 DESCRIPTION="The PyPA recommended tool for installing Python packages."
 
 # unbundle all dependencies already in distro
