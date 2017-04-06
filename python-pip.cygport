@@ -12,14 +12,14 @@ PATCH_URI="9.0.1-debundled.patch"
 
 ARCH=noarch
 
-python2_pip_REQUIRES="python2-appdirs python2-ipaddress python2-lockfile python2-packaging python2-pyparsing python2-requests python2-setuptools python2-six python2-wheel"
+python2_pip_REQUIRES="python2-appdirs python2-html5lib python2-ipaddress python2-lockfile python2-packaging python2-pyparsing python2-requests python2-setuptools python2-six python2-webencodings python2-wheel"
 python2_pip_CONTENTS="usr/bin/pip2* ${python2_pip_CONTENTS}"
-python3_pip_REQUIRES="python3-appdirs python3-packaging python3-lockfile python3-pyparsing python3-requests python3-setuptools python3-six python3-wheel"
+python3_pip_REQUIRES="python3-appdirs python3-html5lib python3-packaging python3-lockfile python3-pyparsing python3-requests python3-setuptools python3-six python3-webencodings python3-wheel"
 python3_pip_CONTENTS="usr/bin/pip3* ${python3_pip_CONTENTS}"
 
 CYGPORT_USE_UNSTABLE_API=1
 src_unpack_hook() {
-	for m in appdirs.py ipaddress.py lockfile/ ordereddict.py packaging/ pkg_resources/ pyparsing.py requests/ six.py
+	for m in appdirs.py html5lib/ ipaddress.py lockfile/ ordereddict.py packaging/ pkg_resources/ pyparsing.py requests/ six.py webencodings/
 	do
 		find pip/_vendor/$m -delete
 		sed -i -e "\|pip/_vendor/$m|d" pip.egg-info/SOURCES.txt
