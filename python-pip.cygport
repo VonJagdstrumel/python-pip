@@ -1,27 +1,45 @@
+PYTHON_WHEEL_VERSIONS="all"
 inherit python-wheel
 
 NAME="python-pip"
-VERSION=9.0.1
+VERSION=19.0.2
 RELEASE=1
 CATEGORY="Python"
 SUMMARY="Python package installation tool"
 DESCRIPTION="The PyPA recommended tool for installing Python packages."
 
-# unbundle all dependencies already in distro
-PATCH_URI="9.0.1-debundled.patch"
+PATCH_URI="https://src.fedoraproject.org/cgit/rpms/python-pip.git/plain/dummy-certifi.patch"
 
 ARCH=noarch
 
-python2_pip_REQUIRES="python2-appdirs python2-html5lib python2-ipaddress python2-lockfile python2-packaging python2-pyparsing python2-requests python2-setuptools python2-six python2-webencodings python2-wheel"
-python2_pip_CONTENTS="usr/bin/pip2* ${python2_pip_CONTENTS}"
-python3_pip_REQUIRES="python3-appdirs python3-html5lib python3-packaging python3-lockfile python3-pyparsing python3-requests python3-setuptools python3-six python3-webencodings python3-wheel"
-python3_pip_CONTENTS="usr/bin/pip3* ${python3_pip_CONTENTS}"
-
 CYGPORT_USE_UNSTABLE_API=1
 src_unpack_hook() {
-	for m in appdirs.py html5lib/ ipaddress.py lockfile/ ordereddict.py packaging/ pkg_resources/ pyparsing.py requests/ six.py webencodings/
-	do
-		find pip/_vendor/$m -delete
-		sed -i -e "\|pip/_vendor/$m|d" pip.egg-info/SOURCES.txt
-	done
+	rm src/pip/_vendor/certifi/*.pem
+	sed -i '/\.pem$/d' src/pip.egg-info/SOURCES.txt
+}
+
+PKG_NAMES+=" ${NAME}-wheel"
+python_pip_wheel_CONTENTS="
+	usr/share/python-wheels/pip-*.whl
+	usr/share/doc/${NAME}-wheel/
+"
+python27_pip_CONTENTS+=" usr/bin/pip2*"
+python27_pip_REQUIRES="ca-certificates python27-setuptools"
+python34_pip_CONTENTS+=" usr/bin/pip3.4"
+python34_pip_REQUIRES="ca-certificates python34-setuptools"
+python35_pip_CONTENTS+=" usr/bin/pip3.5"
+python35_pip_REQUIRES="ca-certificates python35-setuptools"
+python36_pip_CONTENTS+=" usr/bin/pip3 usr/bin/pip3.6"
+python36_pip_REQUIRES="ca-certificates python36-setuptools"
+python37_pip_CONTENTS+=" usr/bin/pip3.7"
+python37_pip_REQUIRES="ca-certificates python37-setuptools"
+
+REQUIRES_EXCLUDE_FROM="*/etree_lxml.py:*/_vendor/urllib3/contrib/*"
+
+src_install() {
+	cd ${B}
+	python_wheel_install
+
+	insinto /usr/share/python-wheels
+	doins dist/pip-${VERSION}-py2.py3-none-any.whl
 }
