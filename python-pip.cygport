@@ -2,7 +2,7 @@ PYTHON_WHEEL_VERSIONS="all"
 inherit python-wheel
 
 NAME="python-pip"
-VERSION=19.0.2
+VERSION=19.0.3
 RELEASE=1
 CATEGORY="Python"
 SUMMARY="Python package installation tool"
@@ -33,6 +33,8 @@ python36_pip_CONTENTS+=" usr/bin/pip3 usr/bin/pip3.6"
 python36_pip_REQUIRES="ca-certificates python36-setuptools"
 python37_pip_CONTENTS+=" usr/bin/pip3.7"
 python37_pip_REQUIRES="ca-certificates python37-setuptools"
+python38_pip_CONTENTS+=" usr/bin/pip3.8"
+python38_pip_REQUIRES="ca-certificates python38-setuptools"
 
 REQUIRES_EXCLUDE_FROM="*/etree_lxml.py:*/_vendor/urllib3/contrib/*"
 
