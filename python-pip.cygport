@@ -2,13 +2,13 @@ PYTHON_WHEEL_VERSIONS="all"
 inherit python-wheel
 
 NAME="python-pip"
-VERSION=19.0.3
+VERSION=19.1.1
 RELEASE=1
 CATEGORY="Python"
 SUMMARY="Python package installation tool"
 DESCRIPTION="The PyPA recommended tool for installing Python packages."
 
-PATCH_URI="https://src.fedoraproject.org/cgit/rpms/python-pip.git/plain/dummy-certifi.patch"
+PATCH_URI="https://src.fedoraproject.org/rpms/python-pip/raw/master/f/dummy-certifi.patch"
 
 ARCH=noarch
 
