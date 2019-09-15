@@ -2,7 +2,7 @@ PYTHON_WHEEL_VERSIONS="all"
 inherit python-wheel
 
 NAME="python-pip"
-VERSION=19.1.1
+VERSION=19.2.3
 RELEASE=1
 CATEGORY="Python"
 SUMMARY="Python package installation tool"
