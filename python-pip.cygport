@@ -1,7 +1,7 @@
 inherit python-wheel
 
 NAME="python-pip"
-VERSION=20.2.1
+VERSION=21.0.1
 RELEASE=1
 CATEGORY="Python"
 SUMMARY="Python package installation tool"
@@ -31,5 +31,5 @@ src_install() {
 	cd ${B}
 	python_wheel_install
 
-	dowheel dist/pip-${VERSION}-py2.py3-none-any.whl
+	dowheel dist/pip-${VERSION}-py3-none-any.whl
 }
