@@ -1,7 +1,7 @@
 inherit python-wheel
 
 NAME="python-pip"
-VERSION=21.0.1
+VERSION=21.3.1
 RELEASE=1
 CATEGORY="Python"
 SUMMARY="Python package installation tool"
@@ -22,8 +22,8 @@ python_pip_wheel_CONTENTS="
 	usr/share/python-wheels/pip-*.whl
 	usr/share/doc/${NAME}-wheel/
 "
-python39_pip_CONTENTS+=" usr/bin/pip3.9"
-python39_pip_REQUIRES="ca-certificates python39-setuptools"
+python311_pip_CONTENTS+=" usr/bin/pip3.11"
+python311_pip_REQUIRES="ca-certificates python311-setuptools"
 
 REQUIRES_EXCLUDE_FROM="*/etree_lxml.py:*/_vendor/urllib3/contrib/*"
 
