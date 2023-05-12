@@ -1,7 +1,9 @@
+PYTHON_WHEEL_VERSIONS="3.9:3.11"
 inherit python-wheel
 
+LICENSE="BSD-1-Clause"
 NAME="python-pip"
-VERSION=21.3.1
+VERSION=23.1.2
 RELEASE=1
 CATEGORY="Python"
 SUMMARY="Python package installation tool"
@@ -17,19 +19,58 @@ src_unpack_hook() {
 	sed -i '/\.pem$/d' src/pip.egg-info/SOURCES.txt
 }
 
-PKG_NAMES+=" ${NAME}-wheel"
-python_pip_wheel_CONTENTS="
-	usr/share/python-wheels/pip-*.whl
-	usr/share/doc/${NAME}-wheel/
-"
-python311_pip_CONTENTS+=" usr/bin/pip3.11"
+BUILD_REQUIRES="python39-setuptools python311-setuptools ca-certificates"
+
+python39_pip_REQUIRES="ca-certificates python39-setuptools"
 python311_pip_REQUIRES="ca-certificates python311-setuptools"
 
-REQUIRES_EXCLUDE_FROM="*/etree_lxml.py:*/_vendor/urllib3/contrib/*"
+python39_pip_CONTENTS+="
+	usr/bin/pip3.9
+	etc/postinstall/python39-pip.sh
+	etc/preremove/python39-pip.sh"
+
+python311_pip_CONTENTS+="
+	usr/bin/pip3.11
+	etc/postinstall/python311-pip.sh
+	etc/preremove/python311-pip.sh"
+
+REQUIRES_EXCLUDE_FROM="*/etree_lxml.py:*/_vendor/urllib3/contrib/*:*/sphinxext.py:*/_vendor/pyparsing/diagram/*"
 
 src_install() {
 	cd ${B}
 	python_wheel_install
 
-	dowheel dist/pip-${VERSION}-py3-none-any.whl
+	# creating versioned info"
+	pushd ${D}/usr/bin
+	for v in ${PYTHON_WHEEL_VERSIONS//:/ }
+	do
+		sed -i -e "1s/python$/python${v}/g" pip${v}
+		sed -i -e "1s/3.9/${v}/g" pip${v}
+		sed -i -e "1s/.exe//g" pip${v}
+	done
+
+	# removing unversioned info
+	rm pip3
+
+	# writing post install alternatives script for pip3
+	mkdir -p ${D}/etc/postinstall
+	pushd ${D}/etc/postinstall
+	for v in ${PYTHON_WHEEL_VERSIONS//:/ }
+	do
+		ver=$(echo ${v} | sed "s/\.//")
+		echo "# Install this package as a pip3 alternative.
+/usr/sbin/alternatives --install /usr/bin/pip3 pip3  /usr/bin/pip${v} ${ver}
+" >> python${ver}-pip.sh
+	done
+
+	# writing pre remove alternatives script for pip3
+	mkdir -p ${D}/etc/preremove
+	pushd ${D}/etc/preremove
+	for v in ${PYTHON_WHEEL_VERSIONS//:/ }
+	do
+		ver=$(echo ${v} | sed "s/\.//")
+		echo " Remove this package as  pip3 alternative.
+/usr/sbin/alternatives --remove pip3 /usr/bin/pip${v}
+" > python${ver}-pip.sh
+	done
 }
