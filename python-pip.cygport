@@ -1,10 +1,10 @@
-PYTHON_WHEEL_VERSIONS="3.9:3.11"
+PYTHON_WHEEL_VERSIONS="3.9:3.11:3.13"
 inherit python-wheel
 
 LICENSE="BSD-1-Clause"
 NAME="python-pip"
-VERSION=23.1.2
-RELEASE=1
+VERSION=24.0
+RELEASE=2
 CATEGORY="Python"
 SUMMARY="Python package installation tool"
 DESCRIPTION="The PyPA recommended tool for installing Python packages."
@@ -19,10 +19,11 @@ src_unpack_hook() {
 	sed -i '/\.pem$/d' src/pip.egg-info/SOURCES.txt
 }
 
-BUILD_REQUIRES="python39-setuptools python311-setuptools ca-certificates"
+BUILD_REQUIRES="python39-setuptools python311-setuptools python313-setuptools ca-certificates"
 
 python39_pip_REQUIRES="ca-certificates python39-setuptools"
 python311_pip_REQUIRES="ca-certificates python311-setuptools"
+python313_pip_REQUIRES="ca-certificates python313-setuptools"
 
 python39_pip_CONTENTS+="
 	usr/bin/pip3.9
@@ -33,6 +34,11 @@ python311_pip_CONTENTS+="
 	usr/bin/pip3.11
 	etc/postinstall/python311-pip.sh
 	etc/preremove/python311-pip.sh"
+
+python313_pip_CONTENTS+="
+	usr/bin/pip3.13
+	etc/postinstall/python313-pip.sh
+	etc/preremove/python313-pip.sh"
 
 REQUIRES_EXCLUDE_FROM="*/etree_lxml.py:*/_vendor/urllib3/contrib/*:*/sphinxext.py:*/_vendor/pyparsing/diagram/*"
 
@@ -45,7 +51,7 @@ src_install() {
 	for v in ${PYTHON_WHEEL_VERSIONS//:/ }
 	do
 		sed -i -e "1s/python$/python${v}/g" pip${v}
-		sed -i -e "1s/3.9/${v}/g" pip${v}
+		sed -i -e "1s/3.[0-9]\+/${v}/g" pip${v}
 		sed -i -e "1s/.exe//g" pip${v}
 	done
 
@@ -60,7 +66,7 @@ src_install() {
 		ver=$(echo ${v} | sed "s/\.//")
 		echo "# Install this package as a pip3 alternative.
 /usr/sbin/alternatives --install /usr/bin/pip3 pip3  /usr/bin/pip${v} ${ver}
-" >> python${ver}-pip.sh
+" > python${ver}-pip.sh
 	done
 
 	# writing pre remove alternatives script for pip3
@@ -69,7 +75,7 @@ src_install() {
 	for v in ${PYTHON_WHEEL_VERSIONS//:/ }
 	do
 		ver=$(echo ${v} | sed "s/\.//")
-		echo " Remove this package as  pip3 alternative.
+		echo "# Remove this package as a pip3 alternative.
 /usr/sbin/alternatives --remove pip3 /usr/bin/pip${v}
 " > python${ver}-pip.sh
 	done
