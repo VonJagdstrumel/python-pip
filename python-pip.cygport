@@ -3,7 +3,7 @@ inherit python-wheel
 
 LICENSE="BSD-1-Clause"
 NAME="python-pip"
-VERSION=24.0
+VERSION=24.1.2
 RELEASE=2
 CATEGORY="Python"
 SUMMARY="Python package installation tool"
