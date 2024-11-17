@@ -3,7 +3,7 @@ inherit python-wheel
 
 LICENSE="BSD-1-Clause"
 NAME="python-pip"
-VERSION=24.1.2
+VERSION=24.3.1
 RELEASE=2
 CATEGORY="Python"
 SUMMARY="Python package installation tool"
@@ -19,22 +19,23 @@ src_unpack_hook() {
 	sed -i '/\.pem$/d' src/pip.egg-info/SOURCES.txt
 }
 
+PKG_NAMES+=" ${NAME}-wheel"
+python_pip_wheel_CONTENTS="
+	usr/share/python-wheels/pip-*.whl
+	usr/share/doc/${NAME}-wheel/
+"
 BUILD_REQUIRES="python39-setuptools python311-setuptools python313-setuptools ca-certificates"
-
 python39_pip_REQUIRES="ca-certificates python39-setuptools"
-python311_pip_REQUIRES="ca-certificates python311-setuptools"
-python313_pip_REQUIRES="ca-certificates python313-setuptools"
-
 python39_pip_CONTENTS+="
 	usr/bin/pip3.9
 	etc/postinstall/python39-pip.sh
 	etc/preremove/python39-pip.sh"
-
+python311_pip_REQUIRES="ca-certificates python311-setuptools"
 python311_pip_CONTENTS+="
 	usr/bin/pip3.11
 	etc/postinstall/python311-pip.sh
 	etc/preremove/python311-pip.sh"
-
+python313_pip_REQUIRES="ca-certificates python313-setuptools"
 python313_pip_CONTENTS+="
 	usr/bin/pip3.13
 	etc/postinstall/python313-pip.sh
@@ -45,6 +46,8 @@ REQUIRES_EXCLUDE_FROM="*/etree_lxml.py:*/_vendor/urllib3/contrib/*:*/sphinxext.p
 src_install() {
 	cd ${B}
 	python_wheel_install
+
+	dowheel dist/pip-${VERSION}-py3-none-any.whl
 
 	# creating versioned info"
 	pushd ${D}/usr/bin
